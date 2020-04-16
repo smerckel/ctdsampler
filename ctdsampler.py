@@ -9,8 +9,8 @@ import warnings
 import urwid
 import matplotlib.pyplot as plt
 import serial
-import serial.aio as serial_asyncio
-
+#import serial.aio as serial_asyncio
+import serial_asyncio
 
 # plt.show(block=False) produces a warning. Ignore this from being printed.
 warnings.filterwarnings("ignore", module="matplotlib")
@@ -20,7 +20,7 @@ _, STOP, START, SAVE, CLEAR, GRAPH = range(6)
 
 class RunningAverager(object):
     ''' Running averaging class based on a recursive form of calculating 
-        an averaged.
+        an average.
     '''
     def __init__(self):
         self.reset()
@@ -354,9 +354,9 @@ class CTDInterface(asyncio.Protocol):
             
 
 # a coroutine to start up the serial interface.
-async def start_serial_interface(loop, queue, interface, port, baudrate):
+async def start_serial_interface(loop, queue, interface, device, baudrate):
     coro = serial_asyncio.create_serial_connection(loop, interface,
-                                                   port, baudrate=9600)
+                                                   device, baudrate=9600)
     transport, protocol = await coro
     protocol.loop = loop
     protocol.queue = queue
@@ -366,12 +366,12 @@ async def start_serial_interface(loop, queue, interface, port, baudrate):
 def main():
     ########### MAIN #############
     parser = OptionParser()
-    parser.add_option("-p", "--port", dest="port", default='/dev/ttyUSB0',
-                      help="Selects serial port to use (default /dev/ttyUSB0)", metavar="SERIAL_PORT")
+    parser.add_option("-d", "--device", dest="device", default='/dev/ttyUSB0',
+                      help="Selects serial device to use (default /dev/ttyUSB0)", metavar="SERIAL_DEVICE")
 
     (options, args) = parser.parse_args()
 
-    port = options.port
+    device = options.device
     baudrate = 9600
 
     # get the event loop and queue to pass data from ctd_interface to ui
@@ -382,7 +382,7 @@ def main():
     # and the ctd_interface (serial connection to the CTD itself)
     ctd_interface = loop.run_until_complete(start_serial_interface(loop, queue,
                                                                    CTDInterface,
-                                                                   port, baudrate))
+                                                                   device, baudrate))
     # create the user interface.
     ui = UI(loop, queue)
     # connect ctd_interface.writer to ui.writer
