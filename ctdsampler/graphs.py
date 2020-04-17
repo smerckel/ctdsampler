@@ -147,12 +147,11 @@ class FourPanelPlotter(ProcessPlotter):
             ax.set_ylabel(label)
 
 class Graph(object):
-    def __init__(self):
+    def __init__(self, N=100):
         labels = dict(converted=["C (S/m)", "T (degC)", "P (bar)", "-"],
                       raw=["P1 (counts)", "P2 (counts)", "P3 (counts)", "P4 (counts)"])
-        plotter = FourPanelPlotter(N=100, labels=labels)
+        plotter = FourPanelPlotter(N=N, labels=labels)
         self.plot_process, self.plot_pipe = create_plot_process(plotter)
-        print("plot_process started.")
         self.is_labels_set = False
         
     def plot(self, *p):
@@ -166,6 +165,7 @@ class Graph(object):
                 self.set_labels('raw')
             else:
                 self.is_labels_set=False
+                
     def plot_points(self, *p):
         self.plot_pipe.send(('data_points',p))
                 

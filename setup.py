@@ -2,9 +2,9 @@ from setuptools import setup
 
 setup(name="ctdsampler",
       version="0.1",
-      packages = [],
+      packages = ['ctdsampler'],
       py_modules = [],
-      entry_points = {'console_scripts':['ctdsampler = ctdsampler:main'],
+      entry_points = {'console_scripts':['ctdsampler = ctdsampler.scripts:main'],
                       'gui_scripts':[]
                       },
       install_requires = 'urwid matplotlib serial'.split(),
