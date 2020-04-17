@@ -1,6 +1,3 @@
-# ctdsampler
-CTDsampler program
-
 CTD SAMPLER
 -----------
     
@@ -10,7 +7,7 @@ Seabird's Glider Payload CTDs.
 Wiring
 ------
 
-The CTD is to be connected to a serial port on this computer:
+The CTD is to be connected to a serial port on this computer
 
 +----------------------------------------------------------------+
 | PC -> switch board : 3 wired serial cable (RX/TX/GND)          |
