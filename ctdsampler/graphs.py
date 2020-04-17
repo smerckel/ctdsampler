@@ -119,7 +119,7 @@ class FourPanelPlotter(ProcessPlotter):
         self.lines = []
         self.points = []
         for p, ax in zip("c t d dt".split(), self.ax):
-            line, = ax.plot([], label='Averaged')
+            line, = ax.plot([], label='Averaged', zorder=100)
             self.lines.append(line)
             points, = ax.plot([],'o', label='Measurement')
             self.points.append(points)
