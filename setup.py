@@ -7,7 +7,7 @@ setup(name="ctdsampler",
       entry_points = {'console_scripts':['ctdsampler = ctdsampler.scripts:main'],
                       'gui_scripts':[]
                       },
-      install_requires = 'urwid matplotlib serial'.split(),
+      install_requires = 'urwid matplotlib pyserial pyserial-asyncio'.split(),
       author="Lucas Merckelbach",
       author_email="lucas.merckelbach@hzg.de",
       description="A simple program with UI to monitor a Seabird GPCTD",
