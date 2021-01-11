@@ -127,7 +127,7 @@ class FourPanelPlotter(ProcessPlotter):
             ax.set_xlim(0,N)
             ax.relim()
             ax.autoscale_view()
-            ax.legend(loc='upper right')
+            ax.legend(loc='upper left')
             
     def plot_clear(self):
         for d in self.data.values():
