@@ -201,7 +201,6 @@ class UI(object):
                 self.graph.plot(*values)
                 self.graph.plot_points(c, t, d, dt)
 
-            
             # see if user requested to print calibration data.
             if "SBE Slocum Payload CTD" in s:
                 self.issaving=True
@@ -218,7 +217,8 @@ class UI(object):
                         m = self.scrolled_texts['results'].append("%35s %35s"%(v))
                     self.widgets['results'].original_widget.set_text(m)
                     temp_list.clear()
-                
+                    
+
 
     def create_running_averagers(self):
         ''' create running averagers for c t and d variables.'''
@@ -264,7 +264,7 @@ class UI(object):
             
     def save_parameters_to_file(self, s):
         ''' Save calibration parameters to file with date time indication.'''
-        fn = "{}.dat".format(strftime("%y%m%dT%H%M"))
+        fn = f"Seabird_CTD_configuration_{time.strftime('%y%m%dT%H%M')}.dat"
         with open(fn, 'w') as fp:
             for l in s:
                 fp.write("{}\n".format(l))
