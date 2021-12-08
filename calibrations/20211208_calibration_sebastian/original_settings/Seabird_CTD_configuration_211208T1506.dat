@@ -1,0 +1,28 @@
+SBE Slocum Payload CTD V 1.3.1  39
+temperature:  15-Feb-18
+    TA0 = -9.058845e-05
+    TA1 = 3.101364e-04
+    TA2 = -4.921348e-06
+    TA3 = 2.108834e-07
+conductivity:  15-Feb-18
+    G = -1.001275e+00
+    H = 1.650519e-01
+    I = -3.436408e-04
+    J = 5.307284e-05
+    CPCOR = -9.570000e-08
+    CTCOR = 3.250000e-06
+    WBOTC = 3.715585e-07
+pressure S/N 2385297, range = 1450 psia  01-Feb-18
+    PA0 = 1.539961e-01
+    PA1 = 4.907538e-03
+    PA2 = -1.535206e-11
+    PTCA0 = 5.250772e+05
+    PTCA1 = 2.016446e+00
+    PTCA2 = -2.519739e-02
+    PTCB0 = 2.620388e+01
+    PTCB1 = 1.750000e-04
+    PTCB2 = 0.000000e+00
+    PTEMPA0 = -6.947425e+01
+    PTEMPA1 = 5.177839e-02
+    PTEMPA2 = -5.484572e-07
+    POFFSET = 0.000000e+00

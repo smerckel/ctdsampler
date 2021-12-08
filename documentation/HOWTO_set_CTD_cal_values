@@ -1,0 +1,22 @@
+How to Set CTD calibration values
+
+1) Prepare a file with three columns
+
+T bath (C) ; C bath (S/M) and P2 (Hz)
+
+2) modify a CTD calibration script to read that file.
+   this script gives four values of g h i j coefficients
+   
+3) run minicom 9600 8N1 no no (minicom ctd)
+
+- stop the logging with typing "stop"
+- set the calibration date, like CCalDate=8-12-2021
+- set G, like CG=0.102312 
+- set H, I, J similarly (CH=... CI=... CH=...)
+
+switch of CTD.
+
+Instead of using minicom it is also possible to to change the configuration
+using u4stalk <uart> 9600 c <power bit>
+
+for uart and power_bit, see the proglets file.
