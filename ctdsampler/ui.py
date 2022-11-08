@@ -5,7 +5,7 @@ import time
 
 from . import graphs
 
-_, QUIT, STOP, START, SAVE, CLEAR, TOGGLE_OUTPUT_FORMAT, GRAPH, ADJUST_AXIS = range(9)
+_, QUIT, STOP, START, SAVE, CLEAR, TOGGLE_OUTPUT_FORMAT, GRAPH, ADJUST_AXIS, ENTER = range(10)
 
 
 class RunningAverager(object):
@@ -84,7 +84,7 @@ class UI(object):
                ('streak', 'yellow', 'dark blue'),
                ('button','white', 'dark blue')]
     # define the sizes of each window.
-    sizes = dict(top=3, body=15, bottom=2)
+    sizes = dict(top=5, body=13, bottom=2)
 
     def __init__(self, loop, queue):
         self.loop = loop
@@ -143,6 +143,8 @@ class UI(object):
             action = ADJUST_AXIS
         elif key in ('O', 'o'):
             action = TOGGLE_OUTPUT_FORMAT
+        elif key == ' ':
+            action = ENTER
         else:
             pass
         if action:
@@ -175,31 +177,33 @@ class UI(object):
                 break
             m = self.scrolled_texts['monitor'].append(s.rstrip())
             self.widgets['monitor'].original_widget.set_text(m)
-            # see if we get a d,t,c triplet:
+            # see if we get a d,t,c,T,P,H sextet:
             try:
-                data_in = [float(x) for x in s.split(',')]
+                data_in = [float(x) for x in s.strip().split(",")]
             except ValueError:
                 pass
             else:
-                if len(data_in) == 3:
+                if len(data_in) == 6:
                     self.israwoutput = False
-                    d, t, c = data_in
+                    d, t, c, T, P, H = data_in
                     dt = None
-                else:
-                    d, t, c, dt = data_in
+                elif len(data_in) == 7:
+                    d, t, c, dt, T, P, H = data_in
                     self.israwoutput = True
+                else:
+                    continue
                 self.islogging = True
                 if self.israwoutput:
-                    values = [self.ra[x].append(y) for x,y in zip('c t d dt'.split(),
-                                                                  (c,t,d, dt))]
+                    values = [self.ra[x].append(y) for x,y in zip('c t d dt P T'.split(),
+                                                                  (c,t,d, dt,P,T))]
                 else:
-                    values = [self.ra[x].append(y) for x,y in zip('c t d'.split(),
-                                                                  (c,t,d))]
+                    values = [self.ra[x].append(y) for x,y in zip('c t d P T'.split(),
+                                                                  (c,t,d,P,T))]
                 svalues = ["{:10.5f}".format(i) for i in values]
                 m = self.scrolled_texts['results'].append(" ".join(svalues))
                 self.widgets['results'].original_widget.set_text(m)
                 self.graph.plot(*values)
-                self.graph.plot_points(c, t, d, dt)
+                self.graph.plot_points(c, t, d, dt, P, T)
 
             # see if user requested to print calibration data.
             if "SBE Slocum Payload CTD" in s:
@@ -222,11 +226,12 @@ class UI(object):
 
     def create_running_averagers(self):
         ''' create running averagers for c t and d variables.'''
-        return dict((k, RunningAverager()) for k in 'c t d dt'.split())
+        return dict((k, RunningAverager()) for k in 'c t d dt P T'.split())
 
     def write_command(self, command):
         for c in command:
             self.writer(c)
+            time.sleep(10/1000)
         self.writer('\n')
         
     def command(self, action):
@@ -242,8 +247,6 @@ class UI(object):
             if not self.islogging:
                 self.write_command('dc')
         elif action == TOGGLE_OUTPUT_FORMAT and (self.islogging==False):
-            self.write_command('')
-            time.sleep(0.5)
             if self.israwoutput:
                 self.write_command('OutputFormat=1')
                 self.graph.set_labels('converted')
@@ -254,13 +257,14 @@ class UI(object):
         elif action == STOP:
             self.islogging = False
             self.write_command('stop')
-            self.write_command('\n')
         elif action == START:
             self.write_command('start')
         elif action == GRAPH:
             self.graph.clear()
         elif action == ADJUST_AXIS:
             self.graph.adjust_axes()
+        elif action == ENTER:
+            self.write_command('')
             
     def save_parameters_to_file(self, s):
         ''' Save calibration parameters to file with date time indication.'''

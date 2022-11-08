@@ -40,7 +40,8 @@ class CTDInterface(asyncio.Protocol):
 # a coroutine to start up the serial interface.
 async def start_serial_interface(loop, queue, interface, device, baudrate):
     coro = serial_asyncio.create_serial_connection(loop, interface,
-                                                   device, baudrate)
+                                                   device, baudrate,
+                                                   rtscts=False, xonxoff=True, dsrdtr=False)
     transport, protocol = await coro
     protocol.loop = loop
     protocol.queue = queue

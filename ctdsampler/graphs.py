@@ -88,37 +88,48 @@ class FourPanelPlotter(ProcessPlotter):
         self.add_command_binding('set_labels_raw', partial(self.plot_set_labels,'raw'), True)
         self.add_command_binding('set_labels_converted', partial(self.plot_set_labels,'converted'), True)
         
-    def plot_update(self, c, t, d, dt=None, plot_type=None):
+    def plot_update(self, *p, plot_type=None):
+        if len(p)==6:
+            c, t, d, dt, P, T = p
+        else:
+            c, t, d, P, T = p
+            dt = None
         if plot_type=='lines':
             data = self.data
             artists = self.lines
         else:
             data = self.data_points
             artists = self.points
+        data['P'].append(P)
+        data['T'].append(T)
         data['c'].append(c)
         data['t'].append(t)
         data['d'].append(d)
         if not dt is None:
             data['dt'].append(dt)
-        for p, artist in zip("c t d dt".split(), artists):
+        for p, artist in zip("c t d dt P T".split(), artists):
             y = np.array(data[p])
             x = np.arange(y.shape[0])
             artist.set_data(x,y)
 
     def plot_init(self):
         N = self.options['N']
-        self.data = {'c' : deque(maxlen=N),
+        self.data = {'P' : deque(maxlen=N),
+                     'T' : deque(maxlen=N),
+                     'c' : deque(maxlen=N),
                      't' : deque(maxlen=N),
                      'd' : deque(maxlen=N),
                      'dt' : deque(maxlen=N)}
-        self.data_points = {'c' : deque(maxlen=N),
+        self.data_points = {'P' : deque(maxlen=N),
+                            'T' : deque(maxlen=N),
+                            'c' : deque(maxlen=N),
                             't' : deque(maxlen=N),
                             'd' : deque(maxlen=N),
                             'dt' : deque(maxlen=N)}
-        self.fig, self.ax = plt.subplots(4,1, sharex=True)
+        self.fig, self.ax = plt.subplots(6,1, sharex=True)
         self.lines = []
         self.points = []
-        for p, ax in zip("c t d dt".split(), self.ax):
+        for p, ax in zip("c t d dt P T".split(), self.ax):
             line, = ax.plot([], label='Averaged', zorder=100)
             self.lines.append(line)
             points, = ax.plot([],'o', label='Measurement')
@@ -148,20 +159,21 @@ class FourPanelPlotter(ProcessPlotter):
 
 class Graph(object):
     def __init__(self, N=100):
-        labels = dict(converted=["C (S/m)", "T (degC)", "P (bar)", "-"],
-                      raw=["P1 (counts)", "P2 (counts)", "P3 (counts)", "P4 (counts)"])
+        labels = dict(converted=["C (S/m)", "T (degC)", "P (bar)", "-", "Pinternal (Pa)", "Tinternal (degC)"],
+                      raw=["P1 (counts)", "P2 (counts)", "P3 (counts)", "P4 (counts)", "Pinternal (Pa)", "Tinternal (degC)"])
         plotter = FourPanelPlotter(N=N, labels=labels)
         self.plot_process, self.plot_pipe = create_plot_process(plotter)
         self.is_labels_set = False
+
         
     def plot(self, *p):
         self.plot_pipe.send(('data',p))
         if not self.is_labels_set:
             self.is_labels_set=True
-            if len(p)==3:
+            if len(p)==5:
                 self.set_labels('converted')
 
-            elif len(p)==4:
+            elif len(p)==6:
                 self.set_labels('raw')
             else:
                 self.is_labels_set=False
